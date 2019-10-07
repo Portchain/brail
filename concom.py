@@ -39,16 +39,24 @@ def main(args):
         elif len(args) >= 3:
             base_treeish = args[2]
             comparison_treeish = args[1]
-        added_records, removed_records = get_diff(comparison_treeish, base_treeish, conf)
+        added_record_ids, removed_record_ids = get_diff(comparison_treeish, base_treeish, conf)
         output('Changes in {0} compared to {1}:'.format(comparison_treeish, base_treeish))
-        for record_id in added_records:
-            lines = read_branch_record(conf, comparison_treeish, record_id).splitlines()
-            output('+ ' + lines[0])
+        added_records = [{'id': record_id, 'content': read_branch_record(conf, comparison_treeish, record_id)} for record_id in added_record_ids]
+        # Sort by record content alphabetically
+        added_records.sort(key=lambda r: r['content'])
+        for record in added_records:
+            lines = record['content'].splitlines()
+            if len(lines) > 0:
+                output('+ ' + lines[0])
             for line in lines[1:]:
                 output('+     ' + line)
-        for record_id in removed_records:
-            lines = read_branch_record(conf, base_treeish, record_id).splitlines()
-            output('- ' + lines[0])
+        removed_records = [{'id': record_id, 'content': read_branch_record(conf, base_treeish, record_id)} for record_id in removed_record_ids]
+        # Sort by record content alphabetically
+        removed_records.sort(key=lambda r: r['content'])
+        for record in removed_records:
+            lines = record['content'].splitlines()
+            if len(lines) > 0:
+                output('- ' + lines[0])
             for line in lines[1:]:
                 output('-     ' + line)
     else:
