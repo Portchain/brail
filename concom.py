@@ -4,42 +4,13 @@ import json
 import os
 import binascii
 from os.path import expanduser, join
-from git import get_repo_dir, add_file
+from git import get_repo_dir, add_file, list_tree
 from editor import call_editor
+from diff import get_diff
+from conf import get_conf_paths, parse_conf_file, merge_confs
 
 class ManagedException(Exception):
     pass
-
-def merge_confs(confs):
-    merged_conf = get_default_conf()
-    for conf in confs:
-        merged_conf = {**merged_conf, **conf}
-    return merged_conf
-
-def parse_conf_file(path):
-    return json.loads(open(path).read())
-
-def get_default_conf():
-    return {
-        "record_dir": None,
-        "editor": None,
-        "auto_add": True,
-    }
-
-def get_conf_paths():
-    paths = []
-    
-    repo_dir = get_repo_dir()
-    if repo_dir is not None:
-        repo_conf_path = join(get_repo_dir(), '.concomconf')
-        if os.path.exists(repo_conf_path):
-            paths.append(repo_conf_path)
-
-    home_conf_path = join(expanduser("~"), '.concomconf')
-    if os.path.exists(home_conf_path):
-        paths.append(home_conf_path)
-    
-    return paths
 
 def generate_record_id():
     return binascii.b2a_hex(os.urandom(20)).decode('utf8')
@@ -59,17 +30,33 @@ def create_record(conf, record_fields):
     repo_dir = get_repo_dir()
     if repo_dir is None:
         raise ManagedException("No git repo found")
-    record_dir = join(repo_dir, conf['record_dir'])
-    if conf['record_dir'] is not None:
-        record_id = generate_record_id()
-        if record_fields is not None:
-            record_buffer = record_fields.get('type', 'type') + ': ' + record_fields.get('description', '')
-        else:
-            record_buffer = None
-        record_path = write_record(record_dir, record_id, record_buffer)
-        return record_id, record_path
-    else:
+    
+    if conf['record_dir'] is None:
         raise ManagedException("Must specify record_dir in conf")
+    record_dir_path = join(repo_dir, conf['record_dir'])
+
+    record_id = generate_record_id()
+    if record_fields is not None:
+        record_buffer = record_fields.get('type', 'type') + ': ' + record_fields.get('description', '')
+    else:
+        record_buffer = None
+    record_path = write_record(record_dir_path, record_id, record_buffer)
+    return record_id, record_path
+
+# Returns buffer
+def read_record(conf, record_id):
+    repo_dir = get_repo_dir()
+    if repo_dir is None:
+        raise ManagedException("No git repo found")
+
+    if conf['record_dir'] is None:
+        raise ManagedException("Must specify record_dir in conf")
+    record_dir_path = join(repo_dir, conf['record_dir'])
+    
+    filename = record_id
+    file_path = join(record_dir_path, filename)
+    with open(file_path, 'r') as f:
+        return f.read()
 
 def error_output(*x):
     print(*x, file=sys.stderr)
@@ -96,6 +83,27 @@ def main(args):
         output(record_id)
         if conf['auto_add']:
             add_file(record_path)
+    elif args[0] == 'diff':
+        if len(args) == 1:
+            base_treeish = conf['default_comparison_base']
+            comparison_treeish = 'HEAD'
+        elif len(args) == 2:
+            base_treeish = args[1]
+            comparison_treeish = 'HEAD'
+        elif len(args) >= 3:
+            base_treeish = args[2]
+            comparison_treeish = args[1]
+        added_records, removed_records = get_diff(comparison_treeish, base_treeish, conf)
+        for record_id in added_records:
+            lines = read_record(conf, record_id).splitlines()
+            print('+ ' + lines[0])
+            for line in lines[1:]:
+                print('+     ' + line)
+        for record_id in removed_records:
+            lines = read_record(conf, record_id).splitlines()
+            print('- ' + lines[0])
+            for line in lines[1:]:
+                print('-     ' + line)
     else:
         error_output('Unknown command: {0}'.format(args[0]))
 
