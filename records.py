@@ -3,6 +3,7 @@ import os
 from os.path import expanduser, join
 from git import get_repo_dir, show_file, list_tree
 from errors import ManagedException
+from postgrator import list_postgrator_records
 
 def generate_record_id():
     return binascii.b2a_hex(os.urandom(20)).decode('utf8')
@@ -12,7 +13,7 @@ def list_records(conf, treeish):
     record_dir = conf['record_dir']
     if conf['record_dir'] is None:
         raise ManagedException("Must specify record_dir in conf")
-    return list_tree(treeish, record_dir + '/')
+    return list_tree(treeish, record_dir + '/') + list_postgrator_records(conf, treeish)
 
 # Buffer may be null, then nothing will be written
 def write_record(record_dir_path, record_id, buffer):
@@ -57,7 +58,15 @@ def create_record(conf, record_fields):
 #         return f.read()
 
 def read_branch_record(conf, treeish, record_id):
-    if conf['record_dir'] is None:
-        raise ManagedException("Must specify record_dir in conf")
-    git_path = join(conf['record_dir'], record_id)
-    return show_file(treeish, git_path)
+    if record_id.startswith('pg/'):
+        filename = record_id[3:]
+        if conf['postgrator_dir'] is None:
+            raise ManagedException("Must specify postgres_dir in conf")
+        git_path = join(conf['postgrator_dir'], filename)
+        return 'migration: ' + git_path
+    else:
+        filename = record_id
+        if conf['record_dir'] is None:
+            raise ManagedException("Must specify record_dir in conf")
+        git_path = join(conf['record_dir'], filename)
+        return show_file(treeish, git_path)

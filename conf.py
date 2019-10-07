@@ -12,6 +12,7 @@ def get_default_conf():
         "editor": None,
         "auto_add": True,
         "default_comparison_base": "master",
+        "postgrator_dir": None,
     }
 
 def get_conf_paths():
