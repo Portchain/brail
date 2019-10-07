@@ -39,7 +39,7 @@ def main(args):
         elif len(args) >= 3:
             base_treeish = args[2]
             comparison_treeish = args[1]
-        added_record_ids, removed_record_ids = get_diff(comparison_treeish, base_treeish, conf)
+        added_record_ids, removed_record_ids = get_diff(conf, comparison_treeish, base_treeish)
         output('Changes in {0} compared to {1}:'.format(comparison_treeish, base_treeish))
         added_records = [{'id': record_id, 'content': read_branch_record(conf, comparison_treeish, record_id)} for record_id in added_record_ids]
         # Sort by record content alphabetically

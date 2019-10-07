@@ -1,11 +1,18 @@
 import binascii
 import os
 from os.path import expanduser, join
-from git import get_repo_dir, show_file
+from git import get_repo_dir, show_file, list_tree
 from errors import ManagedException
 
 def generate_record_id():
     return binascii.b2a_hex(os.urandom(20)).decode('utf8')
+
+# Returns a list of record IDs
+def list_records(conf, treeish):
+    record_dir = conf['record_dir']
+    if conf['record_dir'] is None:
+        raise ManagedException("Must specify record_dir in conf")
+    return list_tree(treeish, record_dir + '/')
 
 # Buffer may be null, then nothing will be written
 def write_record(record_dir_path, record_id, buffer):
