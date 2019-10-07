@@ -4,7 +4,7 @@ import json
 import os
 import binascii
 from os.path import expanduser, join
-from git import get_repo_dir, add_file, list_tree
+from git import get_repo_dir, add_file, list_tree, show_file
 from editor import call_editor
 from diff import get_diff
 from conf import get_conf_paths, parse_conf_file, merge_confs
@@ -58,6 +58,12 @@ def read_record(conf, record_id):
     with open(file_path, 'r') as f:
         return f.read()
 
+def read_branch_record(conf, treeish, record_id):
+    if conf['record_dir'] is None:
+        raise ManagedException("Must specify record_dir in conf")
+    git_path = join(conf['record_dir'], record_id)
+    return show_file(treeish, git_path)
+
 def error_output(*x):
     print(*x, file=sys.stderr)
 
@@ -100,7 +106,7 @@ def main(args):
             for line in lines[1:]:
                 print('+     ' + line)
         for record_id in removed_records:
-            lines = read_record(conf, record_id).splitlines()
+            lines = read_branch_record(conf, base_treeish, record_id).splitlines()
             print('- ' + lines[0])
             for line in lines[1:]:
                 print('-     ' + line)

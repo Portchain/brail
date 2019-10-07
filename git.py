@@ -32,5 +32,10 @@ def list_tree(treeish, path):
         stdout=subprocess.PIPE, stderr=DEVNULL).communicate()[0].rstrip().decode('utf-8').split('\n')
     return [line.split(' ')[2].split('\t')[1].split('/')[-1] for line in lines]
 
+def show_file(treeish, path):
+    return subprocess.Popen(
+        ['git', 'show', treeish + ':' + path],
+        stdout=subprocess.PIPE, stderr=DEVNULL).communicate()[0].decode('utf-8')
+
 def call_git(argv):
     return call(["git"] + argv)
