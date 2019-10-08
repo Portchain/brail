@@ -1,5 +1,5 @@
 import re
-from git import list_tree
+from .git import list_tree
 
 POSTGRATOR_FWD_MIGRATION_REGEX = re.compile(r'^([0-9]+)\.do.*\.sql$')
 

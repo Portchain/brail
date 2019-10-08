@@ -1,9 +1,9 @@
 import binascii
 import os
 import re
-from git import get_repo_dir, show_file, list_tree
-from errors import ManagedException
-from postgrator import list_postgrator_records
+from .git import get_repo_dir, show_file, list_tree
+from .errors import ManagedException
+from .postgrator import list_postgrator_records
 
 RECORD_FILENAME_REGEX = re.compile('^[0-9a-f]{40}$')
 

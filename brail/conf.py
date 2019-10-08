@@ -1,7 +1,7 @@
 import json
 import os
-from git import get_repo_dir
 from os.path import expanduser, join
+from .git import get_repo_dir
 
 def parse_conf_file(path):
     return json.loads(open(path).read())

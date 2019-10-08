@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 import sys
 import json
-from git import add_file
-from editor import call_editor
-from diff import get_diff
-from conf import get_conf_paths, parse_conf_file, merge_confs
-from output import output, error_output
-from errors import ManagedException
-from records import create_record, read_branch_record
-from usage import usage_string
+from .git import add_file
+from .editor import call_editor
+from .diff import get_diff
+from .conf import get_conf_paths, parse_conf_file, merge_confs
+from .output import output, error_output
+from .errors import ManagedException
+from .records import create_record, read_branch_record
+from .usage import usage_string
 
-def main(args):
+def run_brail(args):
     conf_paths = get_conf_paths()
     confs = [parse_conf_file(path) for path in conf_paths]
     conf = merge_confs(confs)
@@ -77,9 +77,12 @@ def main(args):
     else:
         raise ManagedException('Unknown command: {0}'.format(args[0]))
 
-if __name__ == "__main__":
+def main():
     try:
-        main(sys.argv[1:])
+        run_brail(sys.argv[1:])
     except ManagedException as e:
         error_output(str(e))
         sys.exit(1)
+
+if __name__ == "__main__":
+    main()

@@ -1,4 +1,4 @@
-from records import list_records
+from .records import list_records
 
 def get_diff(conf, comparison_treeish, base_treeish):
     comparison_record_ids = set(list_records(conf, comparison_treeish))
