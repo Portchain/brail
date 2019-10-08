@@ -1,6 +1,5 @@
 import json
 import os
-from os.path import expanduser, join
 from .git import get_repo_dir
 
 def parse_conf_file(path):
@@ -20,11 +19,11 @@ def get_conf_paths():
     
     repo_dir = get_repo_dir()
     if repo_dir is not None:
-        repo_conf_path = join(get_repo_dir(), '.brailconf')
+        repo_conf_path = os.path.join(get_repo_dir(), '.brailconf')
         if os.path.exists(repo_conf_path):
             paths.append(repo_conf_path)
 
-    home_conf_path = join(expanduser("~"), '.brailconf')
+    home_conf_path = os.path.join(os.path.expanduser("~"), '.brailconf')
     if os.path.exists(home_conf_path):
         paths.append(home_conf_path)
     
