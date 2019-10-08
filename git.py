@@ -1,7 +1,6 @@
 import subprocess
 import os
 import re
-from subprocess import call
 
 DEVNULL = open(os.devnull, 'w')
 
@@ -17,9 +16,8 @@ def get_current_branch():
         match = re.match("ref: refs/heads/(.*)", head_ref)
         if match is None:
             return None
-        else:
-            cur_branch = match.group(1)
-            return cur_branch
+        cur_branch = match.group(1)
+        return cur_branch
     except:
         return None
 
@@ -38,4 +36,4 @@ def show_file(treeish, path):
         stdout=subprocess.PIPE, stderr=DEVNULL).communicate()[0].decode('utf-8')
 
 def call_git(argv):
-    return call(["git"] + argv)
+    return subprocess.call(["git"] + argv)

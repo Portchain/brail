@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import json
-import os
-from git import get_repo_dir, add_file, list_tree, show_file
+from git import add_file
 from editor import call_editor
 from diff import get_diff
 from conf import get_conf_paths, parse_conf_file, merge_confs
@@ -41,21 +40,27 @@ def main(args):
             comparison_treeish = args[1]
         added_record_ids, removed_record_ids = get_diff(conf, comparison_treeish, base_treeish)
         output('Changes in {0} compared to {1}:'.format(comparison_treeish, base_treeish))
-        added_records = [{'id': record_id, 'content': read_branch_record(conf, comparison_treeish, record_id)} for record_id in added_record_ids]
+        added_records = [
+            {'id': record_id, 'content': read_branch_record(conf, comparison_treeish, record_id)}
+            for record_id in added_record_ids
+        ]
         # Sort by record content alphabetically
         added_records.sort(key=lambda r: r['content'])
         for record in added_records:
             lines = record['content'].splitlines()
-            if len(lines) > 0:
+            if lines:
                 output('+ ' + lines[0])
             for line in lines[1:]:
                 output('+     ' + line)
-        removed_records = [{'id': record_id, 'content': read_branch_record(conf, base_treeish, record_id)} for record_id in removed_record_ids]
+        removed_records = [
+            {'id': record_id, 'content': read_branch_record(conf, base_treeish, record_id)}
+            for record_id in removed_record_ids
+        ]
         # Sort by record content alphabetically
         removed_records.sort(key=lambda r: r['content'])
         for record in removed_records:
             lines = record['content'].splitlines()
-            if len(lines) > 0:
+            if lines > 0:
                 output('- ' + lines[0])
             for line in lines[1:]:
                 output('-     ' + line)
