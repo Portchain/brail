@@ -5,8 +5,7 @@ Brail is a command-line tool for release management
 
 # Adding brail to a project
 - Create a *record directory* for storing brail records, e.g. `docs/brail`
-- Add a `.brailconf` configuration file in the repository root
-- Specify the record diretory in `.brailconf`, e.g:
+- Add a `.brailconf` configuration file in the repository root, e.g:
 ```
 {
   "record_dir": "docs/brail"
