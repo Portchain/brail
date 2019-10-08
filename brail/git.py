@@ -28,7 +28,7 @@ def list_tree(treeish, path):
     lines = subprocess.Popen(
         ['git', 'ls-tree', treeish, path],
         stdout=subprocess.PIPE, stderr=DEVNULL).communicate()[0].rstrip().decode('utf-8').split('\n')
-    return [line.split(' ')[2].split('\t')[1].split('/')[-1] for line in lines]
+    return [line.split(' ')[2].split('\t')[1].split('/')[-1] for line in lines if line]
 
 def show_file(treeish, path):
     return subprocess.Popen(
