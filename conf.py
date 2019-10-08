@@ -20,11 +20,11 @@ def get_conf_paths():
     
     repo_dir = get_repo_dir()
     if repo_dir is not None:
-        repo_conf_path = join(get_repo_dir(), '.concomconf')
+        repo_conf_path = join(get_repo_dir(), '.brailconf')
         if os.path.exists(repo_conf_path):
             paths.append(repo_conf_path)
 
-    home_conf_path = join(expanduser("~"), '.concomconf')
+    home_conf_path = join(expanduser("~"), '.brailconf')
     if os.path.exists(home_conf_path):
         paths.append(home_conf_path)
     
