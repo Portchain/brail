@@ -1,9 +1,12 @@
 import binascii
 import os
+import re
 from os.path import expanduser, join
 from git import get_repo_dir, show_file, list_tree
 from errors import ManagedException
 from postgrator import list_postgrator_records
+
+record_id_regex = re.compile('^[0-9a-f]{40}$')
 
 def generate_record_id():
     return binascii.b2a_hex(os.urandom(20)).decode('utf8')
@@ -13,7 +16,7 @@ def list_records(conf, treeish):
     record_dir = conf['record_dir']
     if conf['record_dir'] is None:
         raise ManagedException("Must specify record_dir in conf")
-    return list_tree(treeish, record_dir + '/') + list_postgrator_records(conf, treeish)
+    return [x for x in list_tree(treeish, record_dir + '/') if record_id_regex.match(x) is not None] + list_postgrator_records(conf, treeish)
 
 # Buffer may be null, then nothing will be written
 def write_record(record_dir_path, record_id, buffer):
