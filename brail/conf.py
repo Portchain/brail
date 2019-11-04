@@ -8,7 +8,7 @@ def parse_conf_file(path):
 def get_default_conf():
     return {
         "record_dir": None, # Record directory path relative to repo root
-        "editor": "vim",
+        "editor": "vi",
         "auto_add": True,
         "default_comparison_base": "master",
         "postgrator_dir": None,
