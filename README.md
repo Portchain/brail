@@ -1,9 +1,10 @@
 Brail is a command-line tool for release management
 
-# Installing brail
+# For users
+## Installing brail
 - pip3 install brail
 
-# Adding brail to a project
+## Adding brail to a project
 - Create a *record directory* for storing brail records, e.g. `docs/brail`
 - Add a `.brailconf` configuration file in the repository root, e.g:
 ```
@@ -12,7 +13,7 @@ Brail is a command-line tool for release management
 }
 ```
 
-# Configuring an editor
+## Configuring an editor
 - Add a `.brailconf` configuration file in your home directory
 - Specify the editor in `.brailconf`, e.g:
 ```
@@ -21,7 +22,7 @@ Brail is a command-line tool for release management
 }
 ```
 
-# Usage
+## Command-line usage
 ```
   brail config                Show config
 
@@ -33,4 +34,10 @@ Brail is a command-line tool for release management
   brail diff                  Compare HEAD to the default comparison directory
   brail diff <base>           Compare HEAD to the <base> branch
   brail diff <target> <base>  Compare <target> to the <base> branch
+```
+
+# For developers
+## Running unit tests
+```
+python3 -m unittest discover
 ```
