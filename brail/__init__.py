@@ -1,1 +1,1 @@
-# This file is neccessary for test discovery
+# This file is necessary for test discovery
