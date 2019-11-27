@@ -9,7 +9,7 @@ from .diff import get_diff
 from .conf import get_conf_paths, parse_conf_file, merge_confs
 from .output import output, error_output
 from .errors import ManagedException
-from .records import create_record, read_branch_record
+from .records import create_record, read_branch_record, get_record_dir_path, get_record_path, list_workdir_records, delete_record
 from .usage import usage_string
 
 RECORD_TYPES = ('feat', 'fix', 'manual')
@@ -31,6 +31,41 @@ def run_brail(args):
         if len(args) > 1:
             raise ManagedException('Unexpected additional arguments: {0}'.format(args[1:]))
         output(json.dumps(conf, indent=4))
+    elif args[0] in ('e', 'edit'):
+        if len(args) < 2:
+            raise ManagedException('Must provide id or partial id')
+        elif len(args) > 2:
+            raise ManagedException('Unexpected additional arguments: {0}'.format(args[2:]))
+        else:
+            partial_record_id = args[1]
+            record_ids = list_workdir_records(conf, partial_record_id)
+            if not record_ids:
+                raise ManagedException('No record in workdir matches: {0}'.format(partial_record_id))
+            elif len(record_ids)>1:
+                raise ManagedException('Ambigious pattern. Multiple records match')
+            else:
+                record_id = record_ids[0]
+                record_path = get_record_path(conf, record_id)
+                if conf['editor'] is not None:
+                    call_editor(conf['editor'], record_path)
+                else:
+                    raise ManagedException('No editor specified')
+    elif args[0] in ('d', 'delete'):
+        if len(args) < 2:
+            raise ManagedException('Must provide id or partial id')
+        elif len(args) > 2:
+            raise ManagedException('Unexpected additional arguments: {0}'.format(args[2:]))
+        else:
+            partial_record_id = args[1]
+            record_ids = list_workdir_records(conf, partial_record_id)
+            if not record_ids:
+                raise ManagedException('No record in workdir matches: {0}'.format(partial_record_id))
+            elif len(record_ids)>1:
+                raise ManagedException('Ambigious pattern. Multiple records match')
+            else:
+                record_id = record_ids[0]
+                record_dir_path = get_record_dir_path(conf)
+                delete_record(record_dir_path, record_id)
     elif args[0] in RECORD_TYPES:
         parsed_args = create_record_parser.parse_args(args)
         record_fields = {"type": parsed_args.record_type}

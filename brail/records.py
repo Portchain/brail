@@ -23,6 +23,18 @@ def list_records(conf, treeish):
     postgrator_records = list_postgrator_records(conf, treeish)
     return native_records + postgrator_records
 
+# Returns a list of record IDs
+# Does not support postgrator
+def list_workdir_records(conf, partial_record_id):
+    record_dir_path = get_record_dir_path(conf)
+    native_records = [
+        x
+        for x in os.listdir(record_dir_path)
+        if RECORD_FILENAME_REGEX.match(x) is not None
+        and x.lower().startswith(partial_record_id.lower())
+    ]
+    return native_records
+
 # Content may be None, then nothing will be written
 def write_record(record_dir_path, record_id, content):
     filename = record_id
@@ -32,6 +44,25 @@ def write_record(record_dir_path, record_id, content):
             f.write(content)
             os.fsync(f)
     return file_path
+
+def delete_record(record_dir_path, record_id):
+    filename = record_id
+    file_path = os.path.join(record_dir_path, filename)
+    os.unlink(file_path)
+
+def get_record_dir_path(conf):
+    repo_dir = get_repo_dir()
+    if repo_dir is None:
+        raise ManagedException("No git repo found")
+
+    if conf['record_dir'] is None:
+        raise ManagedException("Must specify record_dir in conf")
+    return os.path.join(repo_dir, conf['record_dir'])
+
+def get_record_path(conf, record_id):
+    filename = record_id
+    record_dir_path = get_record_dir_path(conf)
+    return os.path.join(record_dir_path, filename)
 
 # record_fields is dict or None
 def create_record(conf, record_fields):
