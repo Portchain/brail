@@ -18,7 +18,7 @@ Brail is a command-line tool for release management
 - Specify the editor in `.brailconf`, e.g:
 ```
 {
-  "record_dir": "docs/brail"
+  "editor": "vim"
 }
 ```
 
