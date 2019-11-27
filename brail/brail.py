@@ -73,6 +73,8 @@ def run_brail(args):
                 output('+ ' + lines[0])
             for line in lines[1:]:
                 output('+     ' + line)
+            if len(lines) > 1 and lines[-1] != '':
+                output('+')
         removed_records = [
             {'id': record_id, 'content': read_branch_record(conf, base_treeish, record_id)}
             for record_id in removed_record_ids
@@ -85,6 +87,8 @@ def run_brail(args):
                 output('- ' + lines[0])
             for line in lines[1:]:
                 output('-     ' + line)
+            if len(lines) > 1 and lines[-1] != '':
+                output('+')
     else:
         raise ManagedException('Unknown command: {0}'.format(args[0]))
 
