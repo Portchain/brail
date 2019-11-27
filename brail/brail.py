@@ -88,7 +88,7 @@ def run_brail(args):
             for line in lines[1:]:
                 output('-     ' + line)
             if len(lines) > 1 and lines[-1] != '':
-                output('+')
+                output('-')
     else:
         raise ManagedException('Unknown command: {0}'.format(args[0]))
 
