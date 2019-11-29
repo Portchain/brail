@@ -62,7 +62,7 @@ def run_brail(args):
             if not record_ids:
                 raise ManagedException('No record in workdir matches: {0}'.format(partial_record_id))
             elif len(record_ids)>1:
-                raise ManagedException('Ambigious pattern. Multiple records match')
+                raise ManagedException('Ambiguous pattern. Multiple records match')
             else:
                 record_id = record_ids[0]
                 record_dir_path = get_record_dir_path(conf)
