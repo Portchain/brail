@@ -35,21 +35,6 @@ def list_workdir_records(conf, partial_record_id):
     ]
     return native_records
 
-# Content may be None, then nothing will be written
-def write_record(record_dir_path, record_id, content):
-    filename = record_id
-    file_path = os.path.join(record_dir_path, filename)
-    with open(file_path, 'w') as f:
-        if content:
-            f.write(content)
-            os.fsync(f)
-    return file_path
-
-def delete_record(record_dir_path, record_id):
-    filename = record_id
-    file_path = os.path.join(record_dir_path, filename)
-    os.unlink(file_path)
-
 def get_record_dir_path(conf):
     repo_dir = get_repo_dir()
     if repo_dir is None:
@@ -95,3 +80,20 @@ def read_branch_record(conf, treeish, record_id):
             raise ManagedException("Must specify record_dir in conf")
         git_path = os.path.join(conf['record_dir'], filename)
         return show_file(treeish, git_path)
+
+### Functions below do not take any conf
+
+# Content may be None, then nothing will be written
+def write_record(record_dir_path, record_id, content):
+    filename = record_id
+    file_path = os.path.join(record_dir_path, filename)
+    with open(file_path, 'w') as f:
+        if content:
+            f.write(content)
+            os.fsync(f)
+    return file_path
+
+def delete_record(record_dir_path, record_id):
+    filename = record_id
+    file_path = os.path.join(record_dir_path, filename)
+    os.unlink(file_path)
