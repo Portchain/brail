@@ -19,6 +19,7 @@ create_record_parser.add_argument('record_type', choices=RECORD_TYPES)
 create_record_parser.add_argument('-m', '--message')
 
 diff_parser = argparse.ArgumentParser()
+diff_parser.add_argument('-v', '--verbose', action='store_true')
 diff_parser.add_argument('treeishes', nargs='*')
 
 def run_brail(args):
@@ -105,6 +106,8 @@ def run_brail(args):
         for record in added_records:
             lines = record['content'].splitlines()
             if lines:
+                if parsed_args.verbose:
+                    output('+ ID: ' + record['id'])
                 output('+ ' + lines[0])
             for line in lines[1:]:
                 output('+     ' + line)
@@ -119,6 +122,8 @@ def run_brail(args):
         for record in removed_records:
             lines = record['content'].splitlines()
             if lines:
+                if parsed_args.verbose:
+                    output('- ID: ' + record['id'])
                 output('- ' + lines[0])
             for line in lines[1:]:
                 output('-     ' + line)
