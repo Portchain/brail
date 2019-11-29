@@ -32,7 +32,7 @@ def run_brail(args):
         if len(args) > 1:
             raise ManagedException('Unexpected additional arguments: {0}'.format(args[1:]))
         output(json.dumps(conf, indent=4))
-    elif args[0] in ('e', 'edit'):
+    elif args[0] in ('edit'):
         if len(args) < 2:
             raise ManagedException('Must provide id or partial id')
         elif len(args) > 2:
@@ -51,7 +51,7 @@ def run_brail(args):
                     call_editor(conf['editor'], record_path)
                 else:
                     raise ManagedException('No editor specified')
-    elif args[0] in ('d', 'delete'):
+    elif args[0] in ('delete'):
         if len(args) < 2:
             raise ManagedException('Must provide id or partial id')
         elif len(args) > 2:
