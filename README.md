@@ -31,6 +31,9 @@ Brail is a command-line tool for release management
   brail fix                   Create a bugfix record
   brail manual                Create a manual step record
 
+  brail edit <record-id>      Edit a record
+  brail delete <record-id>    Delete a record
+  
   brail diff                  Compare HEAD to the default comparison directory
   brail diff <base>           Compare HEAD to the <base> branch
   brail diff <target> <base>  Compare <target> to the <base> branch
@@ -40,4 +43,9 @@ Brail is a command-line tool for release management
 ## Running unit tests
 ```
 python3 -m unittest discover
+```
+
+## Running integration test
+```
+integration_test/test.sh
 ```
