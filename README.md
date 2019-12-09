@@ -44,3 +44,8 @@ Brail is a command-line tool for release management
 ```
 python3 -m unittest discover
 ```
+
+## Running integration test
+```
+integration_test/test.sh
+```
