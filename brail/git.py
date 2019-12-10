@@ -1,6 +1,7 @@
 import subprocess
 import os
 import re
+from .errors import ManagedException
 
 DEVNULL = open(os.devnull, 'w')
 
@@ -25,10 +26,14 @@ def add_file(path):
     return call_git(["add", path])
 
 def list_tree(treeish, path):
-    lines = subprocess.Popen(
-        ['git', 'ls-tree', treeish, path],
-        stdout=subprocess.PIPE, stderr=DEVNULL).communicate()[0].rstrip().decode('utf-8').split('\n')
-    return [line.split(' ')[2].split('\t')[1].split('/')[-1] for line in lines if line]
+    process = subprocess.Popen(['git', 'ls-tree', treeish, path], stdout=subprocess.PIPE, stderr=DEVNULL)
+    stdout_result, stderr_result = process.communicate()
+    return_code = process.wait()
+    if return_code != 0:
+        raise ManagedException('Bad treeish: {0}'.format(treeish))
+    else:
+        lines = stdout_result.rstrip().decode('utf-8').split('\n')
+        return [line.split(' ')[2].split('\t')[1].split('/')[-1] for line in lines if line]
 
 def show_file(treeish, path):
     return subprocess.Popen(
