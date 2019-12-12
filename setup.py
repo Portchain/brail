@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='brail',
-    version='0.5',
+    version='0.6',
     description='Command-line tool for managing releases',
     url='http://github.com/Portchain/brail',
     author='Sergei Patiakin',
