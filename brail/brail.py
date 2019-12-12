@@ -49,6 +49,8 @@ def run_brail(args):
                 record_path = get_record_path(conf, record_id)
                 if conf['editor'] is not None:
                     call_editor(conf['editor'], record_path)
+                    if conf['auto_add']:
+                        add_file(record_path)
                 else:
                     raise ManagedException('No editor specified')
     elif args[0] in ('delete'):
@@ -65,8 +67,11 @@ def run_brail(args):
                 raise ManagedException('Ambiguous pattern. Multiple records match')
             else:
                 record_id = record_ids[0]
+                record_path = get_record_path(conf, record_id)
                 record_dir_path = get_record_dir_path(conf)
                 delete_record(record_dir_path, record_id)
+                if conf['auto_add']:
+                    add_file(record_path)
     elif args[0] in RECORD_TYPES:
         parsed_args = create_record_parser.parse_args(args)
         record_fields = {"type": parsed_args.record_type}
